@@ -1,0 +1,61 @@
+{# Load the tag library #}
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+<style>
+  #id_text{
+    width: 73vw;
+    margin-left: 1vw;}
+  .done{
+    text-decoration: line-through;
+    color: darkgray;
+  }
+</style>
+  </head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+  <h1 class=" navbar-brand">Todo List</h1>
+<ul class=" pl-3 pb-1 navbar-nav mr-auto">
+  <li class="  nav-item  active">
+    <a href="{% url 'home' %}" class=" text-muted text-decoration-none text-secondary">Home</a>
+  </li>
+</ul>  
+{% if user.is_authenticated %}
+<ul class="navbar-nav pl-3 pb-1">
+  <li class="  nav-item  active">
+    <a href="{% url 'logout' %}" class=" text-muted text-decoration-none text-secondary">Logout</a>
+  </li>
+  
+{% else %}
+
+<ul class=" pl-3 pb-1 navbar-nav ">
+  <li class="  nav-item  active">
+    <a href="{% url 'register' %}" class=" text-muted text-decoration-none text-secondary">Sign up</a>
+  </li>
+</ul>  
+<ul class="navbar-nav pl-3 pb-1">
+  <li class="  nav-item  active">
+    <a href="{% url 'login' %}" class=" text-muted text-decoration-none text-secondary">Login</a>
+  </li>
+
+</ul>
+
+{% endif %}
+</nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  
+  {% block content %}
+    
+  {% endblock content %}
+  </body>
+</html>

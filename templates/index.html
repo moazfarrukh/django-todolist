@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+{% if user.is_authenticated %}
+  
+
+<div id="app" class="ml-3 container">
+  <h1 style="text-align: center;">Todo List</h1>
+      <div class="form-inline mb-5">  
+  <input @keyup.enter="addTodo()" type="text" v-model="todoText" style="width: 64rem ;" class="form-control mb-2 mr-sm-2"  >
+  <button @click="addTodo()"  class="btn btn-primary mb-2 pl-3 pr-3">Add</button>
+</div> 
+<ul v-if="todos" v-for="(todo,index) in todos" class ="list-unstyled" >
+  <div class="col-sm-12 d-flex justify-content-between">
+  <div class="col-sm-2   d-flex ">
+    <input v-model="todo.done" @click="updateState(index,todo.id)" class="mt-2"  type="checkbox">
+       <li class="pl-3" :class="{done:todo.done}">[[todo.text]]</li>  
+  </div>
+ 
+      <button type="submit" @click="deleteTodo(todo.id,index)" class=" float-right  btn btn-danger  ">delete</button>
+    </div>
+    <hr>
+      </ul>
+</div>
+{% else %}
+<h4 class="  pt-4 text-center">You need to have an account to access your todo list. You can login <a class="text-decoration-none" href="{% url 'login' %}">here.</a></h4>
+
+{% endif %}
+
+<script>
+  
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken')
+ 
+</script>
+<script>
+var app = new Vue({
+  el:"#app",
+  delimiters:["[[","]]"],
+  data:{
+      todos: [],todoText:""
+    },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData() {
+      const author = parseInt("{{request.user.id}}")
+      const url = "/api/list?id="+author;
+      
+      axios.get(url).then(response => {
+        response.data.forEach(
+          element =>{
+            this.todos.push({text:element.text,
+                            id:element.id,done:element.done})
+          }
+        )
+      });
+    },
+    deleteTodo(id,index){
+      url = "api/delete/"+id
+      axios.delete(url,{headers:{'X-CSRFToken': csrftoken}})
+      .then(this.$delete(this.todos,index))
+      .catch(err => {
+        console.error(err); 
+      })
+    },
+  addTodo(){
+    axios.post("{% url 'createapi'%}",{
+    "text": this.todoText,
+    "author": parseInt("{{request.user.id}}")
+},{headers:{'X-CSRFToken': csrftoken}}).then(res=>{
+  this.todoText = ""
+  this.todos.push({text:res.data.text,id:res.data.id,done:res.data.done})
+}).catch(err => {
+    console.error(err); 
+  })
+  },updateState(index,id){
+    this.todos[index].done = !this.todos[index].done
+    url = "api/update/"+id
+    axios.put(url,{done:this.todos[index].done},{headers:{'X-CSRFToken': csrftoken}})
+    .catch(err => {
+      console.error(err); 
+    })
+  }
+  },
+});
+
+</script>
+{% endblock content %}
