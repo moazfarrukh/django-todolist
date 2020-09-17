@@ -25,7 +25,7 @@ SECRET_KEY = 'l@e2(azelsq3-c#8crr92izov&a1pjr8r0+(5r^6uivy6^lg#0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1","moaz4.herokuapp.com"]
 
 
 # Application definition
