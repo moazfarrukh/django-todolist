@@ -1,1 +1,0 @@
-web: gunicorn todoproject.wsgi
