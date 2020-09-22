@@ -7,7 +7,7 @@
 <div id="app" class="ml-3 container">
   <h1 style="text-align: center;">Todo List</h1>
       <div class="form-inline mb-5">  
-  <input @keyup.enter="addTodo()" type="text" v-model="todoText" style="width: 60vh ;" class="form-control mb-2 mr-sm-2"  >
+  <input @keyup.enter="addTodo()" type="text" v-model="todoText" style="width: 60vw ;" class="form-control mb-2 mr-sm-2"  >
   <button @click="addTodo()"  class="btn btn-primary mb-2 pl-3 pr-3">Add</button>
 </div> 
 <ul v-if="todos" v-for="(todo,index) in todos" class ="list-unstyled" >
