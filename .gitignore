@@ -1,4 +1,12 @@
-*.sqlite3
+# created by virtualenv automatically
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.pyc
 *.py[cod]
 *$py.class
+
+# C extensions
+*.so
+env/
+*.sqlite3
+todo/__pycache__/
