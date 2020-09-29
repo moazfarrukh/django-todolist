@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
 {% block content %}
-{% if user.is_authenticated %}
   
 
 <div id="app" class="ml-3 container">
@@ -22,10 +21,6 @@
     <hr>
       </ul>
 </div>
-{% else %}
-<h4 class="  pt-4 text-center">You need to have an account to access your todo list. You can login <a class="text-decoration-none" href="{% url 'login' %}">here.</a></h4>
-
-{% endif %}
 
 <script>
   
@@ -48,6 +43,8 @@ const csrftoken = getCookie('csrftoken')
  
 </script>
 <script>
+const user  = "{{request.user}}"
+let anon_list = []
 var app = new Vue({
   el:"#app",
   delimiters:["[[","]]"],
@@ -59,9 +56,13 @@ var app = new Vue({
   },
   methods: {
     fetchData() {
-      const author = parseInt("{{request.user.id}}")
-      const url = "/api/list?id="+author;
-      
+      if (user== "AnonymousUser"){
+      console.log('Hey anonymous person you need an account to save your todos')
+      }
+      else{
+        const author = parseInt("{{request.user.id}}")
+        const url = "/api/list?id="+author;
+        console.log(typeof author)
       axios.get(url).then(response => {
         response.data.forEach(
           element =>{
@@ -69,7 +70,8 @@ var app = new Vue({
                             id:element.id,done:element.done})
           }
         )
-      });
+      });}
+      
     },
     deleteTodo(id,index){
       url = "api/delete/"+id
@@ -80,6 +82,12 @@ var app = new Vue({
       })
     },
   addTodo(){
+    if (user== "AnonymousUser"){
+      anon_list.push({text:this.todoText,id:anon_list.length,done:false})
+      this.todoText=""
+      this.todos= anon_list
+    }
+    else{
     axios.post("{% url 'createapi'%}",{
     "text": this.todoText,
     "author": parseInt("{{request.user.id}}")
@@ -89,7 +97,7 @@ var app = new Vue({
 }).catch(err => {
     console.error(err); 
   })
-  },updateState(index,id){
+  }},updateState(index,id){
     this.todos[index].done = !this.todos[index].done
     url = "api/update/"+id
     axios.put(url,{done:this.todos[index].done},{headers:{'X-CSRFToken': csrftoken}})
