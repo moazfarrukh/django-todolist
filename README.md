@@ -1,2 +1,2 @@
 # django-todolist
-a todolist made with django
+A todolist made with django
